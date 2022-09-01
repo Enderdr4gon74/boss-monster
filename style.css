@@ -1,0 +1,82 @@
+:root {
+  --health-green: #1c9a06;
+  --health-yellow: #d7df08;
+  --health-red: #c90808;
+}
+
+header, footer {
+  min-height: 15%;
+}
+
+.healthBar{
+  min-height: 1rem;
+}
+
+.healthBar .health-100 {
+  width: 100%;
+}
+
+.healthBar .health-90 {
+  width: 90%;
+}
+
+.healthBar .health-80 {
+  width: 80%;
+}
+
+.healthBar .health-100, .healthBar .health-90, .healthBar .health-80 {
+  background-color: var(--health-green);
+}
+
+.healthBar .health-70 {
+  width: 70%;
+}
+
+.healthBar .health-60 {
+  width: 60%;
+}
+
+.healthBar .health-50 {
+  width: 50%;
+}
+
+.healthBar .health-40 {
+  width: 40%;
+}
+
+.healthBar .health-70, .healthBar .health-60, .healthBar .health-50, .healthBar .health-40 {
+  background-color: var(--health-yellow);
+}
+
+.healthBar .health-30 {
+  width: 30%;
+}
+
+.healthBar .health-20 {
+  width: 20%;
+}
+
+.healthBar .health-10 {
+  width: 10%;
+}
+
+.healthBar .health-0 {
+  width: 0%;
+}
+
+.healthBar .health-30, .healthBar .health-20, .healthBar .health-10, .healthBar .health-0 {
+  background-color: var(--health-red);
+}
+
+.healthBar .health-0, .healthBar .health-10, .healthBar .health-20, .healthBar .health-30, .healthBar .health-40, .healthBar .health-50, .healthBar .health-60, .healthBar .health-70, .healthBar .health-80, .healthBar .health-90, .healthBar .health-100 {
+  height: 3rem;
+}
+
+.img-text {
+  font-size: 100pt;
+}
+
+.img-height {
+  height: 25vh;
+  width: 32.46796425850246vh;
+}

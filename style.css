@@ -80,3 +80,7 @@ header, footer {
   height: 25vh;
   width: 32.46796425850246vh;
 }
+
+#statusBoss, #statusHeroes, #statusDefeat {
+  min-height: 36.785px;
+}

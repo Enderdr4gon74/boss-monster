@@ -2,16 +2,16 @@ let heroes = [
   {
       name: 'Nekomata catian',
       type: 'Cat-Sith',
-      damage: 35,
-      health: 10,
-      maxHealth: 10,
+      damage: 60,
+      health: 30,
+      maxHealth: 30,
       img: "😺",
       hitPercent: 0.75
   },
   {
       name: 'Flint Ironstag',
       type: 'Elf',
-      damage: 15,
+      damage: 35,
       health: 50,
       maxHealth: 50,
       img: "🧝",
@@ -32,14 +32,15 @@ let boss = {
   maxHealth: 1000,
   damage: 5,
   level: 1,
-  hitPercent: .35
+  hitPercent: .50,
+  reward: 10
 }
 
-let statusMessage = "";
+let statusMessageBoss = "...Loading...";
+let statusMessageHeroes = "...Loading...";
+let statusMessageDefeat = "...Loading...";
 let startGame = false;
-let playerDead1 = false;
-let playerDead2 = false;
-let playerDead3 = false;
+let reward = 0;
 
 function removeHealthClass() {
   let healthElement = document.getElementById("health")?.classList
@@ -101,11 +102,8 @@ function updateBossHealthBar() {
 function drawBattle() {
   let bossElement = document.getElementById("boss");
   let bossTemplate = `
-  <img onclick="attackBoss()" src="IMG_2237.PNG" alt="boss" class="img-height img-fluid">
-  <div class="d-flex justify-content-between">
-    <h4 class="me-5">Health: ${boss.health}</h4>
-    <h4 class="ms-5">Level: ${boss.level}</h4>
-  </div>
+  <h4 class="me-5">Health: ${boss.health}</h4>
+  <h4 class="ms-5">Level: ${boss.level}</h4>
   `
   if (bossElement && bossTemplate != ``) {
     bossElement.innerHTML = bossTemplate
@@ -117,7 +115,7 @@ function drawBattle() {
     <div class="col-2 d-flex flex-column align-items-center mx-5 my-3 border border-3 border-dark">
       <h1 class="img-text">${heroes[i].img}</h1>
       <h4>${heroes[i].name}</h4>
-      <h4>Health: <span class="text-success">${heroes[i].health}</span></h4>
+      <h4>Health: <span class="text-success">${heroes[i].health}/${heroes[i].maxHealth}</span></h4>
       <h4>Attack Power: <span class="text-danger">${heroes[i].damage}</span></h4>
       <h4>Race: <span class="text-primary">${heroes[i].type}</span></h4>
     </div>
@@ -130,81 +128,143 @@ function drawBattle() {
 
 function attackBoss () {
   if (startGame) {
+    console.log("boss attacked")
+    let condition1 = false;
+    let condition2 = false;
+    let condition3 = false;
+    if (heroes[0].health > 0) {
+      condition1 = true
+    }
+    if (heroes[1].health > 0) {
+      condition2 = true
+    }
+    if (heroes[2].health) {
+      condition3 = true
+    }
     let hero1hit = false;
     let hero2hit = false;
     let hero3hit = false;
-    if (Math.random() <= (heroes[0].hitPercent)) {
-      boss.health -= heroes[0].damage;
-      hero1hit = true;
-    } if (Math.random() <= (heroes[1].hitPercent)) {
-      boss.health -= heroes[1].damage;
-      hero2hit = true;
-    } if (Math.random() <= (heroes[2].hitPercent)) {
-      boss.health -= heroes[2].damage;
-      hero3hit = true;
+    if (condition1) {
+      if (Math.random() <= (heroes[0].hitPercent)) {
+        boss.health -= heroes[0].damage;
+        hero1hit = true;
+      }
+    }
+    if (condition2) {
+      if (Math.random() <= (heroes[1].hitPercent)) {
+        boss.health -= heroes[1].damage;
+        hero2hit = true;
+      }
+    }
+    if (condition3) {
+        if (Math.random() <= (heroes[2].hitPercent)) {
+        boss.health -= heroes[2].damage;
+        hero3hit = true;
+      }
     }
     if (hero1hit) {
       if (hero2hit) {
         if (hero3hit) {
-          statusMessage = "All heroes hit the boss!"
+          statusMessageBoss += "All heroes hit the boss! "
         } else if (!hero3hit) {
-          statusMessage = "Only " + heroes[0].name + " and " + heroes[1].name + " hit the boss!"
+          statusMessageBoss += "Only " + heroes[0].name + " and " + heroes[1].name + " hit the boss! "
         }
       } else if (!hero2hit) {
         if (hero3hit) {
-          statusMessage = "Only " + heroes[0].name + " and " + heroes[3].name + " hit the boss!"
+          statusMessageBoss += "Only " + heroes[0].name + " and " + heroes[3].name + " hit the boss! "
         } else if (!hero3hit) {
-          statusMessage = "Only " + heroes[0].name + " hit the boss!"
+          statusMessageBoss += "Only " + heroes[0].name + " hit the boss! "
         }
       }
     } else if (!hero1hit) {
       if (hero2hit) {
         if (hero3hit) {
-          statusMessage = "Only " + heroes[1].name + " and " + heroes[2].name + " hit the boss!"
+          statusMessageBoss += "Only " + heroes[1].name + " and " + heroes[2].name + " hit the boss! "
         } else if (!hero3hit) {
-          statusMessage = "Only " + heroes[1].name + " hit the boss!"
+          statusMessageBoss += "Only " + heroes[1].name + " hit the boss! "
         }
       } else if (!hero2hit) {
         if (hero3hit) {
-          statusMessage = "Only " + heroes[2].name + " hit the boss!"
+          statusMessageBoss += "Only " + heroes[2].name + " hit the boss! "
         } else if (!hero3hit) {
-          statusMessage = "None of the heroes could hit the boss!"
+          statusMessageBoss += "None of the heroes could hit the boss! "
         }
       }
     }
-    if (boss.health <= 0) {
-      boss.health = 0;
-      bossDefeat()
-    }
     drawBattle()
-    drawStatusBlank()
+    drawStatusBlankBoss()
     updateBossHealthBar()
   }
 }
 
-function drawStatusBlank() {
-  let statusElement = document.getElementById("status");
-  let statusTemplate = `
-  <h4>...</h4>
+function drawStatusBlankBoss() {
+  let statusBossElement = document.getElementById("statusBoss");
+  let statusBossTemplate = `
+  <h4>...Loading...</h4>
   `
-  if (statusElement && statusTemplate != ``) {
-    statusElement.innerHTML = statusTemplate
+  if (statusBossElement && statusBossTemplate != ``) {
+    statusBossElement.innerHTML = statusBossTemplate
   }
-  setTimeout(drawStatus, 250)
+  setTimeout(drawStatusBoss, 50)
 }
 
-function drawStatus() {
-  let statusElement = document.getElementById("status");
-  let statusTemplate = `
-  <h4>${statusMessage}</h4>
+function drawStatusBlankHeroes() {
+  let statusHerosElement = document.getElementById("statusHeroes");
+  let statusHerosTemplate = `
+  <h4>...Loading...</h4>
   `
-  if (statusElement && statusTemplate != ``) {
-    statusElement.innerHTML = statusTemplate
+  if (statusHerosElement && statusHerosTemplate != ``) {
+    statusHerosElement.innerHTML = statusHerosTemplate
   }
+  setTimeout(drawStatusHeroes, 50)
+}
+
+function drawStatusBlankDefeat() {
+  let statusDefeatElement = document.getElementById("statusDefeat");
+  let statusDefeatTemplate = `
+  <h4>...loading...</h4>
+  `
+  if (statusDefeatElement && statusDefeatTemplate != ``) {
+    statusDefeatElement.innerHTML = statusDefeatTemplate
+  }
+  setTimeout(drawStatusDefeat, 50)
+}
+
+function drawStatusBoss() {
+  let statusBossElement = document.getElementById("statusBoss");
+  let statusBossTemplate = `
+  <h4>${statusMessageBoss}</h4>
+  `
+  if (statusBossElement && statusBossTemplate != ``) {
+    statusBossElement.innerHTML = statusBossTemplate
+  }
+  statusMessageBoss = ""
+}
+
+function drawStatusHeroes() {
+  let statusHerosElement = document.getElementById("statusHeroes");
+  let statusHerosTemplate = `
+  <h4>${statusMessageHeroes}</h4>
+  `
+  if (statusHerosElement && statusHerosTemplate != ``) {
+    statusHerosElement.innerHTML = statusHerosTemplate
+  }
+  statusMessageHeroes = ""
+}
+
+function drawStatusDefeat() {
+  let statusDefeatElement = document.getElementById("statusDefeat");
+  let statusDefeatTemplate = `
+  <h4>${statusMessageDefeat}</h4>
+  `
+  if (statusDefeatElement && statusDefeatTemplate != ``) {
+    statusDefeatElement.innerHTML = statusDefeatTemplate
+  }
+  statusMessageDefeat = ""
 }
 
 function bossDefeat() {
-  statusMessage = "The boss was defeated... but it's not done yet"
+  statusMessageDefeat += "The boss was defeated... but it's not done yet! "
   // reset boss and upgrade
   boss.maxHealth *= 1.5
   boss.health = boss.maxHealth
@@ -212,29 +272,52 @@ function bossDefeat() {
   boss.damage *= 1.25
   boss.hitPercent *= 1.5
   // boss make sure JS not dumb
-  boss.maxHealth = (Math.round(boss.maxHealth*100))/100
-  boss.health = (Math.round(boss.health*100))/100
-  boss.damage = (Math.round(boss.damage*100))/100
-  boss.hitPercent = (Math.round(boss.hitPercent*100))/100
+  boss.maxHealth = Math.round(boss.maxHealth)
+  boss.health = Math.round(boss.health)
+  boss.damage = Math.round(boss.damage)
+  boss.hitPercent = Math.round(boss.hitPercent)
   // heal and upgrade heroes
   for (let i = 0; i < heroes.length; i++) {
-    heroes[i].maxHealth *= (Math.round((1+Math.random())*100))/100
+    heroes[i].maxHealth = Math.round(heroes[i].maxHealth * (1+Math.random()))
     heroes[i].health = heroes[i].maxHealth
-    heroes[i].damage *= (Math.round((1+Math.random())*100))/100
-    heroes[i].hitPercent *= (Math.round((1+Math.random())*100))/100
+    heroes[i].damage = Math.round(heroes[i].damage * (1+Math.random()))
+    heroes[i].hitPercent = Math.round(heroes[i].hitPercent * (1+Math.random()))
   }
-  drawStatusBlank()
+  // reward heroes
+  reward += Math.round(10 * (1 + (boss.level/10)))
+  drawReward()
+  drawStatusBlankDefeat()
   drawBattle()
   updateBossHealthBar()
 }
 
+function drawReward() {
+  let rewardElement = document.getElementById("reward")
+  let rewardTemplate = `
+  <h4>Gold: ${reward}</h4>
+  <button onclick="healthPotion()" class="btn btn-info">Health Potion</button>
+  <button onclick="gameStart()" class="btn btn-info">Game Start</button>
+  `
+  if (rewardElement && rewardTemplate != ``) {
+    rewardElement.innerHTML = rewardTemplate
+  }
+}
+
 function attackPlayers() {
-  if (startGame) {
+  let condition = true
+  if (heroes[0].health <= 0  && heroes[1].health <= 0 && heroes[2].health <= 0) {
+    condition = false
+  }
+  if (startGame && condition) {
     let bossHit1 = false;
     let bossHit2 = false;
     let bossHit3 = false;
-    let bossHit = Math.random()
+    let justDied1 = false;
+    let justDied2 = false;
+    let justDied3 = false;
+    let bossHit = 0
     for (let index = 0; index < heroes.length; index++) {
+      bossHit = (Math.random()+Math.random()+Math.random()+Math.random()+Math.random())/5
       if (bossHit <= boss.hitPercent && heroes[index].health > boss.damage) {
         heroes[index].health -= boss.damage
         if (index == 0) {
@@ -247,56 +330,58 @@ function attackPlayers() {
       } else if (bossHit <= boss.hitPercent && heroes[index].health <= boss.damage && heroes[index].health > 0) {
         heroes[index].health = 0
         if (index == 0) {
+          justDied1 = true
           bossHit1 = true;
         } else if (index == 1) {
+          justDied2 = true
           bossHit2 = true
         } else if (index == 2) {
+          justDied3 = true
           bossHit3 = true;
-        }
-      } else if (bossHit <= boss.hitPercent && heroes[index].health == 0) {
-        if (index == 0) {
-          playerDead1 = true
-        } else if (index == 1) {
-          playerDead2 = true
-        } else if (index == 2) {
-          playerDead3 = true
         }
       }
     }
     if (bossHit1) {
       if (bossHit2) {
         if (bossHit3) {
-          statusMessage = "The boss was able to hit all 3 heroes"
+          statusMessageHeroes += "The boss was able to hit all 3 heroes! "
         } else if (!bossHit3) {
-          statusMessage = "The boss was able to hit " + heroes[0].name + " and " + heroes[1].name + "!"
+          statusMessageHeroes += "The boss was able to hit " + heroes[0].name + " and " + heroes[1].name + "! "
         }
       } else if (!bossHit2) {
         if (bossHit3) {
-          statusMessage = "The boss was able to hit " + heroes[0].name + " and " + heroes[2].name + "!"
+          statusMessageHeroes += "The boss was able to hit " + heroes[0].name + " and " + heroes[2].name + "! "
         } else if (!bossHit3) {
-          statusMessage = "The boss was able to hit " + heroes[0].name + "!"
+          statusMessageHeroes += "The boss was able to hit " + heroes[0].name + "! "
         }
       }
     } else if (!bossHit1) {
       if (bossHit2) {
         if (bossHit3) {
-          statusMessage = "The boss was able to hit " + heroes[1].name + " and " + heroes[2].name + "!"
+          statusMessageHeroes += "The boss was able to hit " + heroes[1].name + " and " + heroes[2].name + "! "
         } else if (!bossHit3) {
-          statusMessage = "The boss was able to hit " + heroes[1].name + "!"
+          statusMessageHeroes += "The boss was able to hit " + heroes[1].name + "! "
         }
       } else if (!bossHit2) {
         if (bossHit3) {
-          statusMessage = "The boss was able to hit " + heroes[2].name + "!"
+          statusMessageHeroes += "The boss was able to hit " + heroes[2].name + "! "
         } else if (!bossHit3) {
-          statusMessage = "The boss wasn't able to hit any heroes!"
+          statusMessageHeroes += "The boss wasn't able to hit any heroes! "
         }
       }
-    } if (playerDead1) {
-      statusMessage = "The boss killed " + heroes[0].name + "!"
+    } if (justDied1) {
+      statusMessageHeroes += "The boss killed " + heroes[0].name + "! "
+    } if (justDied2) {
+      statusMessageHeroes += "The boss killed " + heroes[1].name + "! "
+    } if (justDied3) {
+      statusMessageHeroes += "The boss killed " + heroes[2].name + "! "
     }
 
-    drawStatusBlank()
+    drawStatusBlankHeroes()
     drawBattle()
+  } else if (heroes[0].health <= 0  && heroes[1].health <= 0 && heroes[2].health <= 0) {
+    statusMessageHeroes += "All the Heroes are dead" 
+    drawStatusBlankHeroes()
   }
 }
 
@@ -304,12 +389,45 @@ function gameStart() {
   if (!startGame) {
     startGame = true;
   }
-  statusMessage = "Game Start!"
-  drawStatusBlank()
+  statusMessageBoss =   "..........."
+  statusMessageHeroes = "Game Start!"
+  statusMessageDefeat = "..........."
+  drawStatusBlankBoss()
+  drawStatusBlankHeroes()
+  drawStatusBlankDefeat()
 }
 
-setInterval(attackPlayers, 15000)
+function healthPotion () {
+  if (startGame) {
+    if (reward >= 30) {
+      reward -= 30
+      for (let i = 0; i < heroes.length; i++) {
+        heroes[i].health = heroes[i].maxHealth
+      }
+      statusMessageDefeat = "Health Potion used, all Heroes healed!"
+    } else {
+      statusMessageDefeat = "Not enough gold!"
+    }
+    drawStatusDefeat()
+  }
+}
 
+function bossDefeatActivator() {
+  if (startGame) {
+    if (boss.health <= 0) {
+      boss.health = 0;
+      bossDefeat()
+    }
+  }
+}
+
+setInterval(attackPlayers, 5000)
+setInterval(bossDefeatActivator, 100)
+setInterval(drawBattle, 100)
+
+drawReward()
 drawBattle()
 updateBossHealthBar()
-drawStatus()
+drawStatusBoss()
+drawStatusHeroes()
+drawStatusDefeat()

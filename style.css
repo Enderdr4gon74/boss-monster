@@ -84,3 +84,7 @@ header, footer {
 #statusBoss, #statusHeroes, #statusDefeat {
   min-height: 36.785px;
 }
+
+.mb-10 {
+  margin-bottom: 9rem;
+}

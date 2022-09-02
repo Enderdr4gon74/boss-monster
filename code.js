@@ -30,7 +30,7 @@ let heroes = [
 let boss = {
   health: 1000,
   maxHealth: 1000,
-  damage: 5,
+  damage: 15,
   level: 1,
   hitPercent: .50,
   reward: 10
@@ -404,6 +404,7 @@ function healthPotion () {
       for (let i = 0; i < heroes.length; i++) {
         heroes[i].health = heroes[i].maxHealth
       }
+      drawReward()
       statusMessageDefeat = "Health Potion used, all Heroes healed!"
     } else {
       statusMessageDefeat = "Not enough gold!"
@@ -424,6 +425,7 @@ function bossDefeatActivator() {
 setInterval(attackPlayers, 5000)
 setInterval(bossDefeatActivator, 100)
 setInterval(drawBattle, 100)
+setInterval(updateBossHealthBar, 100)
 
 drawReward()
 drawBattle()
